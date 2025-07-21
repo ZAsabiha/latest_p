@@ -12,7 +12,7 @@ const AttendanceLogs = () => {
     {
       id: 1,
       employeeId: 'EMP001',
-      name: 'Sarah Johnson',
+      name: 'Sanjana Afreen',
       department: 'Engineering',
       avatar: 'SJ',
       clockIn: '09:00 AM',
@@ -26,7 +26,7 @@ const AttendanceLogs = () => {
     {
       id: 2,
       employeeId: 'EMP002',
-      name: 'Michael Chen',
+      name: 'Afrin Jahan Era',
       department: 'Marketing',
       avatar: 'MC',
       clockIn: '09:15 AM',
@@ -40,7 +40,7 @@ const AttendanceLogs = () => {
     {
       id: 3,
       employeeId: 'EMP003',
-      name: 'Emily Rodriguez',
+      name: 'Ramisa Anan Rahman',
       department: 'HR',
       avatar: 'ER',
       clockIn: '08:45 AM',
@@ -54,7 +54,7 @@ const AttendanceLogs = () => {
     {
       id: 4,
       employeeId: 'EMP004',
-      name: 'David Kim',
+      name: 'Zannatul Adon Sabiha',
       department: 'Engineering',
       avatar: 'DK',
       clockIn: '--',
@@ -68,7 +68,7 @@ const AttendanceLogs = () => {
     {
       id: 5,
       employeeId: 'EMP005',
-      name: 'Lisa Wang',
+      name: 'Nishat Tasnim',
       department: 'Finance',
       avatar: 'LW',
       clockIn: '09:05 AM',
@@ -82,7 +82,7 @@ const AttendanceLogs = () => {
     {
       id: 6,
       employeeId: 'EMP006',
-      name: 'James Wilson',
+      name: 'Ayesha Binte Anis',
       department: 'Sales',
       avatar: 'JW',
       clockIn: '08:30 AM',

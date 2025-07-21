@@ -35,7 +35,7 @@ const response = await fetch('http://localhost:5000/auth/login', {
 
     if (response.ok) {
       console.log('Login successful:', data);
-      navigate('/EmployeeList');
+      navigate('/dashboard');
     } else {
       setError(data.message || 'Login failed. Please try again.');
     }

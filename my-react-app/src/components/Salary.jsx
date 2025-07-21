@@ -85,7 +85,7 @@ const Salary = () => {
       };
 
       const response = await fetch('http://localhost:5000/api/salaries', {
-        method: 'POST',
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
@@ -93,7 +93,7 @@ const Salary = () => {
       const data = await response.json();
 
       if (data.success) {
-        setMessage('Salary added successfully!');
+        setMessage('Salary updated successfully!');
         setFormData({
           department: formData.department,
           employee: '',
@@ -114,7 +114,7 @@ const Salary = () => {
 
   return (
     <div className="salary-form-container">
-      <h2 className="salary-form-title">Add New Salary</h2>
+      <h2 className="salary-form-title">Salary Management</h2>
       <form onSubmit={handleSubmit} className="salary-form">
         
         <div className="salary-form-group">
@@ -192,7 +192,7 @@ const Salary = () => {
         </div>
 
         <button type="submit" className="salary-submit-btn" disabled={loading}>
-          {loading ? 'Adding...' : 'Add Salary'}
+          {loading ? 'Adding...' : 'Update Salary'}
         </button>
       </form>
 

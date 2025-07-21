@@ -374,9 +374,9 @@ import React, { useState } from "react";
 
 const AdminProfile = () => {
     const [profileData] = useState({
-        name: "John Anderson",
+        name: "Mrittika Jahan",
         title: "System Administrator",
-        email: "john.anderson@company.com",
+        email: "mrittikajahan@company.com",
         phone: "+1 (555) 123-4567",
         department: "IT Administration",
         employeeId: "EMP-2024-001",

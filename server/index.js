@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 import express from 'express';
 import cors from 'cors';
 import session from 'express-session';
-
+import bcrypt from 'bcryptjs';
 import adminRoutes from './src/routes/adminRoutes.js';
 import employeeRoutes from './src/routes/employeeRoutes.js';
 import goalRoutes from './src/routes/goalRoutes.js';
@@ -36,6 +36,9 @@ app.use('/api/salaries', salaryRoutes);
 app.use('/auth', express.json(), authRoutes);
 
 async function main() {
+
+   const plainAdminPassword = 'securepassword123';
+  const hashedAdminPassword = await bcrypt.hash(plainAdminPassword, 10); // salt rounds = 10
   // 1. Create Departments
   const designDept = await prisma.department.upsert({
     where: { name: 'Design' },
@@ -50,15 +53,16 @@ async function main() {
   });
 
   // 2. Create Admin
-  const admin = await prisma.admin.upsert({
-    where: { email: 'admin@hrcore.com' },
-    update: {},
-    create: {
-      name: 'HR Admin',
-      email: 'admin@hrcore.com',
-      password: 'securepassword123'
-    }
-  });
+const admin = await prisma.admin.upsert({
+  where: { email: 'admin@hrcore.com' },
+  update: { password: hashedAdminPassword },  // update existing password to hashed one
+  create: {
+    name: 'HR Admin',
+    email: 'admin@hrcore.com',
+    password: hashedAdminPassword,
+  }
+});
+
 
   // 3. Create Employees if not already created
   const existingEmployees = await prisma.employee.findMany();
@@ -70,9 +74,9 @@ async function main() {
       { name: 'Israt Risha Ivey', position: 'Backend Engineer', gender: 'Female', departmentId: engineeringDept.id },
       { name: 'Zannatul Adon', position: 'UI UX Designer', gender: 'Female', departmentId: designDept.id },
       { name: 'Nishat Tasnim', position: 'UI UX Designer', gender: 'Female', departmentId: designDept.id },
-      { name: 'Adib Rahman', position: 'UI UX Designer', gender: 'Male', departmentId: designDept.id },
-      { name: 'Navid Ibrahim', position: 'UI UX Designer', gender: 'Male', departmentId: designDept.id },
-      { name: 'Hasibul Karim', position: 'UI UX Designer', gender: 'Male', departmentId: designDept.id }
+      { name: 'Ayesha Binte Anis', position: 'UI UX Designer', gender: 'Male', departmentId: designDept.id },
+      { name: 'Adrita Ahsan', position: 'UI UX Designer', gender: 'Male', departmentId: designDept.id },
+      { name: 'Labiba Karim', position: 'UI UX Designer', gender: 'Male', departmentId: designDept.id }
     ];
 
     for (let i = 0; i < employeesData.length; i++) {

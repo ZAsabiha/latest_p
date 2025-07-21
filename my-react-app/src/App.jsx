@@ -1,90 +1,3 @@
-// import React from 'react';
-// import { BrowserRouter, Routes, Route, Link, useNavigate } from 'react-router-dom';
-// import Sidebar from './components/sidebar';
-// import EmployeeListPage from './components/EmployeeListPage';
-// import Profile from './components/ViewEmployee';
-// import EmployeeGoals from './components/EmployeeGoals';
-// import PerformanceReview from './components/PerformanceReview';
-// import LeaveRequests from './components/LeaveRequests';
-// import CandidatesPage from './CandidatesPage';
-// import JobPostingsPage from './JobPostingsPage';
-// import Salary from './components/Salary';
-// import AdminProfile from './components/AdminProfile';
-// import ViewEmployee from './components/ViewEmployee';
-// import LoginForm from './components/LoginForm';
-// import LandingPage from './components/LandingPage';
-// import AttendanceLogs from './components/AttendanceLogs';
-
-// import AboutPage from './components/AboutPage';
-// import ContactPage from './components/ContactPage';
-// import './RecruitmentDashboard.css';
-
-// // ✅ Move handleLogout into a separate component so it has access to useNavigate
-// const LayoutWithSidebar = () => {
-//   const navigate = useNavigate();
-
-//   const handleLogout = () => {
-//     console.log("Logged out");
-//     // Perform logout logic here (clear tokens, etc.)
-//     navigate('/'); // Redirect to LandingPage
-//   };
-
-//   return (
-//     <div className="app-layout">
-//       <Sidebar onLogout={handleLogout} />
-
-//       <div className="main-dashboard">
-//         {/* Top Navigation */}
-//         <div className="top-navigation">
-//           <div className="nav-links">
-//            <button className="nav-link logout-btn" onClick={handleLogout}>
-//               Home
-//             </button>
-//             <Link to="/about" className="nav-link">About</Link>
-//             <Link to="/contact" className="nav-link">Contacts</Link>
-//             <button className="nav-link logout-btn" onClick={handleLogout}>
-//               Logout
-//             </button>
-//           </div>
-//         </div>
-
-//         {/* Nested Routes */}
-//         <Routes>
-//           <Route path="/about" element={<AboutPage />} />
-//           <Route path="/contact" element={<ContactPage />} />
-//           <Route path="/EmployeeList" element={<EmployeeListPage />} />
-//           <Route path="/employee/:id" element={<ViewEmployee />} />
-//           <Route path="/AdminProfile" element={<AdminProfile />} />
-//           <Route path="/EmployeeGoals" element={<EmployeeGoals />} />
-//           <Route path="/Candidates" element={<CandidatesPage />} />
-//           <Route path="/JobPostings" element={<JobPostingsPage />} />
-//           <Route path="/leave-requests" element={<LeaveRequests />} />
-//           <Route path="/attendance" element={<AttendanceLogs />} />
-//           <Route path="/PerformanceReview" element={<PerformanceReview />} />
-//           <Route path="/Salary" element={<Salary />} />
-//           <Route path="*" element={<h2>Page Not Found</h2>} />
-//         </Routes>
-//       </div>
-//     </div>
-//   );
-// };
-
-// function App() {
-//   return (
-//     <BrowserRouter>
-//       <Routes>
-//         {/* Pages WITHOUT sidebar */}
-//         <Route path="/" element={<LandingPage />} />
-//         <Route path="/login" element={<LoginForm />} />
-
-//         {/* Pages WITH sidebar */}
-//         <Route path="*" element={<LayoutWithSidebar />} />
-//       </Routes>
-//     </BrowserRouter>
-//   );
-// }
-
-// export default App;
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from './components/sidebar';
@@ -103,7 +16,10 @@ import LandingPage from './components/LandingPage';
 import AttendanceLogs from './components/AttendanceLogs';
 import AboutPage from './components/AboutPage';
 import ContactPage from './components/ContactPage';
+import Reporting from './components/Reporting';
+import SystemSettings from './components/SystemSettings';
 import './RecruitmentDashboard.css';
+import OvertimePay from './components/OvertimePay';
 
 const LayoutWithSidebar = () => {
   const navigate = useNavigate();
@@ -117,7 +33,7 @@ const LayoutWithSidebar = () => {
     } catch (err) {
       console.error('Logout failed:', err);
     }
-    navigate('/login');
+    navigate('/');
   };
 
   return (
@@ -139,8 +55,6 @@ const LayoutWithSidebar = () => {
         </div>
 
         <Routes>
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/contact" element={<ContactPage />} />
           <Route path="/EmployeeList" element={<EmployeeListPage />} />
           <Route path="/employee/:id" element={<ViewEmployee />} />
           <Route path="/AdminProfile" element={<AdminProfile />} />
@@ -148,9 +62,12 @@ const LayoutWithSidebar = () => {
           <Route path="/Candidates" element={<CandidatesPage />} />
           <Route path="/JobPostings" element={<JobPostingsPage />} />
           <Route path="/leave-requests" element={<LeaveRequests />} />
+          <Route path="/dashboard" element={<Reporting />} />
           <Route path="/attendance" element={<AttendanceLogs />} />
           <Route path="/PerformanceReview" element={<PerformanceReview />} />
           <Route path="/Salary" element={<Salary />} />
+          <Route path="/overtime" element={<OvertimePay />} />
+          <Route path="/settings" element={<SystemSettings />} />
           <Route path="*" element={<h2>Page Not Found</h2>} />
         </Routes>
       </div>
@@ -164,12 +81,7 @@ function App() {
   const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
-    // Don't run on landing or login page
-    if (location.pathname === '/' || location.pathname === '/login') {
-      setCheckingAuth(false);
-      return;
-    }
-
+    // Check authentication status
     fetch('http://localhost:5000/auth/status', {
       credentials: 'include'
     })
@@ -177,13 +89,24 @@ function App() {
       .then(data => {
         if (data.loggedIn) {
           console.log('Still logged in:', data.user);
+
+          // If user is logged in and on landing or login, redirect to reporting page
+          if (location.pathname === '/' || location.pathname === '/login') {
+            navigate('/dashboard');
+          }
         } else {
-          navigate('/login');
+          // User is not logged in
+          if (location.pathname !== '/' && location.pathname !== '/login' && location.pathname !== '/about' && location.pathname !== '/contact') {
+            navigate('/login');
+          }
         }
       })
       .catch(err => {
         console.error('Auth check failed:', err);
-        navigate('/login');
+        // On error, redirect to login if not on public pages
+        if (location.pathname !== '/' && location.pathname !== '/login' && location.pathname !== '/about' && location.pathname !== '/contact') {
+          navigate('/login');
+        }
       })
       .finally(() => setCheckingAuth(false));
   }, [location.pathname, navigate]);
@@ -194,6 +117,9 @@ function App() {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginForm />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/contact" element={<ContactPage />} />
+      <Route path="/home" element={<LandingPage />} />
       <Route path="*" element={<LayoutWithSidebar />} />
     </Routes>
   );

@@ -33,13 +33,13 @@ import express from 'express';
 import {
   getDepartmentsDropdown,
   getEmployeesByDepartment,
-  createSalary
+  updateSalary
 } from '../controllers/salaryController.js';
 
 const router = express.Router();
 
 router.get('/dropdown/departments', getDepartmentsDropdown);
 router.get('/dropdown/employees', getEmployeesByDepartment);
-router.post('/', createSalary);
+router.put('/', updateSalary);
 
 export default router;

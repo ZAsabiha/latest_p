@@ -37,6 +37,7 @@
 // };
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
+import bcrypt from 'bcryptjs';
 
 export const login = async (req, res) => {
   const { username, password } = req.body;
@@ -49,7 +50,13 @@ export const login = async (req, res) => {
     where: { email: username }
   });
 
-  if (!admin || admin.password !== password) {
+  if (!admin) {
+    return res.status(401).json({ message: 'Invalid credentials' });
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, admin.password);
+
+  if (!isPasswordValid) {
     return res.status(401).json({ message: 'Invalid credentials' });
   }
 

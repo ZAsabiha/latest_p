@@ -1,17 +1,14 @@
-/* LeaveRequests.css - Complete styles moved from inline styles */
 
-/* Main Layout */
 .app-container {
   display: flex;
   min-height: 100vh;
-
 }
 
 .main-container {
   flex: 1;
-  background-color: #5e91c4;
+  background-color: #f9fafb;
   min-height: 100vh;
-  margin-left: 180px; /* Account for wider fixed sidebar width */
+  margin-left: 280px; /* Account for wider fixed sidebar width */
 }
 
 /* Navigation Bar */
