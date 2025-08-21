@@ -1,20 +1,3 @@
-// import prisma from '../../prisma/client.js';
-
-// export const getEmployeeById = async (req, res) => {
-//   const { id } = req.params;
-//   try {
-//     const employee = await prisma.employee.findUnique({
-//       where: { id: Number(id) },
-//       include: { department: true }
-//     });
-//     if (!employee) {
-//       return res.status(404).json({ error: 'Employee not found' });
-//     }
-//     res.json(employee);
-//   } catch (err) {
-//     res.status(500).json({ error: 'Failed to fetch employee' });
-//   }
-// };
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
@@ -57,22 +40,28 @@ export const createEmployee = async (req, res) => {
       name, email, department, position,
       salary, status, joinDate, age, experience
     } = req.body;
+    
+const existingEmployee = await prisma.employee.findUnique({
+  where: { email: req.body.email },
+});
 
+if (existingEmployee) {
+  return res.status(400).json({ error: 'Employee with this email already exists.' });
+}
     const newEmployee = await prisma.employee.create({
-      data: {
-        name,
-        email,
-        department: {
-          connect: { name: department }  // relies on Department.name being UNIQUE
-        },
-        position,
-        salary: parseFloat(salary),
-        status,
-        joinDate: new Date(joinDate),
-        age: parseInt(age),
-        experience: parseInt(experience),
-      }
-    });
+  data: {
+    name: req.body.name,
+    email: req.body.email,
+    department: { connect: { name: req.body.department } }, // if using relations
+    position: req.body.position,
+    salary: parseFloat(req.body.salary),
+    status: req.body.status,
+    joinDate: new Date(req.body.joinDate),
+    age: parseInt(req.body.age),
+    experience: parseInt(req.body.experience),
+  }
+});
+
 
     res.status(201).json(newEmployee);
   } catch (err) {
@@ -133,5 +122,39 @@ export const updateEmployee = async (req, res) => {
   } catch (err) {
     console.error('➡️ Failed to update employee:', err);
     res.status(500).json({ error: 'Failed to update employee' });
+  }
+};
+
+
+export const searchEmployees = async (req, res) => {
+  try {
+    const { name } = req.query;
+    if (!name) {
+      return res.status(400).json({ message: 'Search query parameter is required.' });
+    }
+
+    const idSearch = Number(name);
+    const idFilter = !isNaN(idSearch) ? idSearch : undefined;
+
+    // Check if name can be parsed as a date
+    const dateFilter = !isNaN(Date.parse(name)) ? new Date(name) : undefined;
+
+    const employees = await prisma.employee.findMany({
+      where: {
+        OR: [
+          { name: { contains: name } },
+          { email: { contains: name } },
+          { position: { contains: name } },
+          ...(idFilter !== undefined ? [{ id: idFilter }] : []),
+          ...(dateFilter ? [{ joinDate: dateFilter }] : []),
+        ],
+      },
+      include: { department: true },
+    });
+
+    res.json(employees);
+  } catch (error) {
+    console.error('❌ Search error:', error);
+    res.status(500).json({ message: 'Internal Server Error', error: error.message });
   }
 };

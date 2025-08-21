@@ -202,3 +202,5 @@ const Salary = () => {
 };
 
 export default Salary;
+
+// Salary.jsx

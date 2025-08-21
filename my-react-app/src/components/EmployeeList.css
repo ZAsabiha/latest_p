@@ -66,7 +66,7 @@ button {
 }
 
 .delete-btn:hover{
-  background-color: #762626; /* Darker red on hover */
+ background-color:  #276f82;/* Darker red on hover */
 }
 .view-btn:hover{
   background-color: green; /* Darker red on hover */
@@ -189,7 +189,7 @@ button {
 }
 
 .delete-btn:hover {
-  background-color: #762626;
+   background-color:  #276f82;
 }
 
 .action-column {
@@ -220,3 +220,4 @@ button {
 .add-btn:hover {
   background-color: green;
 }
+

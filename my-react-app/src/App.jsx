@@ -80,36 +80,67 @@ function App() {
   const location = useLocation();
   const [checkingAuth, setCheckingAuth] = useState(true);
 
-  useEffect(() => {
-    // Check authentication status
-    fetch('http://localhost:5000/auth/status', {
-      credentials: 'include'
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.loggedIn) {
-          console.log('Still logged in:', data.user);
+  // useEffect(() => {
+  //   // Check authentication status
+  //   fetch('http://localhost:5000/auth/status', {
+  //     credentials: 'include'
+  //   })
+  //     .then(res => res.json())
+  //     .then(data => {
+  //       if (data.loggedIn) {
+  //         console.log('Still logged in:', data.user);
 
-          // If user is logged in and on landing or login, redirect to reporting page
-          if (location.pathname === '/' || location.pathname === '/login') {
-            navigate('/dashboard');
-          }
-        } else {
-          // User is not logged in
-          if (location.pathname !== '/' && location.pathname !== '/login' && location.pathname !== '/about' && location.pathname !== '/contact') {
-            navigate('/login');
-          }
-        }
-      })
-      .catch(err => {
-        console.error('Auth check failed:', err);
-        // On error, redirect to login if not on public pages
-        if (location.pathname !== '/' && location.pathname !== '/login' && location.pathname !== '/about' && location.pathname !== '/contact') {
+  //         // If user is logged in and on landing or login, redirect to reporting page
+  //         if (location.pathname === '/' || location.pathname === '/login') {
+  //           navigate('/dashboard');
+  //         }
+  //       } else {
+  //         // User is not logged in
+  //         if (location.pathname !== '/' && location.pathname !== '/login' && location.pathname !== '/about' && location.pathname !== '/contact') {
+  //           navigate('/login');
+  //         }
+  //       }
+  //     })
+  //     .catch(err => {
+  //       console.error('Auth check failed:', err);
+  //       // On error, redirect to login if not on public pages
+  //       if (location.pathname !== '/' && location.pathname !== '/login' && location.pathname !== '/about' && location.pathname !== '/contact') {
+  //         navigate('/login');
+  //       }
+  //     })
+  //     .finally(() => setCheckingAuth(false));
+  // }, [location.pathname, navigate]);
+
+  useEffect(() => {
+  const checkAuth = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/auth/status', {
+        credentials: 'include',
+      });
+      const data = await res.json();
+
+      if (!data.loggedIn) {
+        // Only redirect if user is not on a public page
+        const publicPaths = ['/', '/login', '/about', '/contact'];
+        if (!publicPaths.includes(location.pathname)) {
           navigate('/login');
         }
-      })
-      .finally(() => setCheckingAuth(false));
-  }, [location.pathname, navigate]);
+      }
+      // If logged in, do nothing – stay on the page user clicked
+    } catch (err) {
+      console.error('Auth check failed:', err);
+      const publicPaths = ['/', '/login', '/about', '/contact'];
+      if (!publicPaths.includes(location.pathname)) {
+        navigate('/login');
+      }
+    } finally {
+      setCheckingAuth(false);
+    }
+  };
+
+  checkAuth();
+}, [location.pathname, navigate]);
+
 
   if (checkingAuth) return <div>Loading...</div>;
 
